@@ -1,4 +1,5 @@
 Enigma 
+
 Once you download the project, you will have two applications: the server (which is the back-end) and the enigma-app which is the React front-end.
 
 You have to go to both and run the following command to download the required modules:
