@@ -38,8 +38,8 @@ app.use(cookieParser());
 
 const salt = 10;
 
-app.post("/register", (req, res) => {
-  const name = req.body.username;
+app.post("/register", async (req, res) => {
+  const name = req.body.name;
   const email = req.body.email;
   const password = req.body.password;
 
@@ -48,37 +48,48 @@ app.post("/register", (req, res) => {
       return res.json({ error: "Error while hashing the password" });
     }
 
-    db.query(
-      "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
-      [name, email, hash],
+    pool.query(
+      "INSERT INTO users (name, email, password) VALUES ($1, $2, $3)",
+      [name, email, password],
       (err, result) => {
-        if (err) return res.json({ error: "Error while inserting the data" });
-        return res.json({ Status: "Success" });
+        if (err)
+          return res.json({
+            error: "Error while inserting the data",
+            description: err,
+          });
+        return res.json({ status: "Success" });
       }
     );
   });
 });
 
-app.post("/login", (req, res) => {
-  const sql = "SELECT * FROM users WHERE email = ?";
-  db.query(sql, [req.body.email], (err, data) => {
+app.post("/login", async (req, res) => {
+  console.log(" at login");
+  const sql = "SELECT * FROM users WHERE email = $1";
+  const email = req.body.email;
+  pool.query(sql, [email], (err, data) => {
     if (err) return res.json({ error: "Logging to server error" });
-    if (data.length > 0) {
-      bcrypt.compare(
-        req.body.password.toString(),
-        data[0].password,
-        (err, response) => {
-          if (err) return res.json({ error: "passport compare error" });
-          if (response) {
-            return res.json({ status: "Success" });
-          } else {
-            return res.json({ error: "password not matched" });
-          }
-        }
-      );
-    } else {
-      return res.json({ error: "email does not exist" });
-    }
+    console.log("data: ", data.rows[0]);
+    return res.status(200).json(data);
+    // if (data.length > 0) {
+    //   console.log("data: ", data);
+    //   console.log("res: ", res);
+    // bcrypt.compare(
+    //   req.body.password.toString(),
+    //   data[0].password,
+    //   (err, response) => {
+    //     if (err) return res.json({ error: "passport compare error" });
+    //     if (response) {
+    //       return res.json({ status: "Success" });
+    //     } else {
+    //       return res.json({ error: "password not matched" });
+    //     }
+    //   }
+    // );
+    // } else {
+    //   console.log("data.length: ", data.length);
+    //   return res.json({ error: "email does not exist" });
+    // }
   });
 });
 

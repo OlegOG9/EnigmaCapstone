@@ -13,12 +13,12 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(values);
+    console.log("values at login", values);
     //call the API
     axios
       .post("http://localhost:8081/login", values)
       .then((res) => {
-        if (res.data.status === "Success") {
+        if (res.data.rows.length > 0) {
           console.log(res);
           navigate("/userdashboard");
         } else {

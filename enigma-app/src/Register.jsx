@@ -19,10 +19,15 @@ const Register = () => {
     axios
       .post("http://localhost:8081/register", values)
       .then((res) => {
-        if (res.data.Status === "Success") {
+        if (res.data.status === "Success") {
           console.log(res);
+
           navigate("/userdashboard");
         } else {
+          console.log(res.data.Status);
+          console.log("res: ", res);
+          console.log("res.data ", res.data);
+          console.log("res.data.description", res.data.description);
           alert("Error");
         }
       })
