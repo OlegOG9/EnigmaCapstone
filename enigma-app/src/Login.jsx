@@ -11,22 +11,24 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("values at login", values);
     //call the API
-    axios
+    await axios
       .post("http://localhost:8081/login", values)
       .then((res) => {
-        if (res.data.rows.length > 0) {
-          console.log(res);
+        console.log("res : ", res);
+        if (res.status === 200) {
+          console.log("res: ", res);
           navigate("/userdashboard");
         } else {
-          alert(res.data.error);
+          console.log("res: ", res.data);
+          alert(res.data);
         }
       })
       .catch((err) => {
-        console.log(err);
+        alert("Error: " + err);
       });
   };
 
