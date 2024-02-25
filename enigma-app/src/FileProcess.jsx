@@ -27,7 +27,6 @@ const FileProcess = () => {
   };
   return (
     <div>
-      <h1>ProcesFiles</h1>
       <input type="file" onChange={onFileChange} />
       <div style={{ marginTop: 25 }}>
         <input type="button" value="Process Image" onClick={processImage} />
