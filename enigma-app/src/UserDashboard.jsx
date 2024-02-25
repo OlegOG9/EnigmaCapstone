@@ -1,6 +1,7 @@
 import React from "react";
 import FileUpload from "./FileUpload";
 import { useState } from "react";
+import FileProcess from "./FileProcess";
 
 const UserDashboard = () => {
   const [newUserInfo, setNewUserInfo] = useState({
@@ -17,7 +18,7 @@ const UserDashboard = () => {
   return (
     <div>
       <h1>UserDashboard</h1>
-      <form onSubmit={handleSubmit}>
+      {/* <form onSubmit={handleSubmit}>
         <FileUpload
           accept=".jpg,.png,.jpeg"
           label="Profile Image(s)"
@@ -25,7 +26,8 @@ const UserDashboard = () => {
           updateFilesCb={updateUploadedFiles}
         />
         <button type="submit">Create New User</button>
-      </form>
+      </form> */}
+      <FileProcess />
     </div>
   );
 };
