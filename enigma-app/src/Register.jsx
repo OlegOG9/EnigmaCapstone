@@ -4,6 +4,7 @@ import axios from "axios";
 import { useState } from "react";
 
 const Register = () => {
+  const [userId, setUserId] = useState(null);
   const [values, setValues] = useState({
     name: "",
     email: "",
@@ -21,8 +22,12 @@ const Register = () => {
       .then((res) => {
         if (res.data.status === "Success") {
           console.log(res);
-
-          navigate("/userdashboard");
+          console.log("res.data ", res.data);
+          const userid = res.data.userid;
+          setUserId(userid);
+          console.log("userid before the navigate: ", userid);
+          console.log("userId before the navigate: ", userId);
+          navigate(`/userdashboard/${userid}`);
         } else {
           console.log(res.data.Status);
           console.log("res: ", res);

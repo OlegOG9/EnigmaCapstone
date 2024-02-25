@@ -1,33 +1,20 @@
 import React from "react";
 import FileUpload from "./FileUpload";
 import { useState } from "react";
+
+import { useParams } from "react-router-dom";
 import FileProcess from "./FileProcess";
 
 const UserDashboard = () => {
-  const [newUserInfo, setNewUserInfo] = useState({
-    profileImages: [],
-  });
+  const { userId } = useParams();
 
-  const updateUploadedFiles = (files) =>
-    setNewUserInfo({ ...newUserInfo, profileImages: files });
+  console.log("userId in UserDashboard: ", userId);
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    //logic to create new user...
-  };
   return (
     <div>
       <h1>UserDashboard</h1>
-      {/* <form onSubmit={handleSubmit}>
-        <FileUpload
-          accept=".jpg,.png,.jpeg"
-          label="Profile Image(s)"
-          multiple
-          updateFilesCb={updateUploadedFiles}
-        />
-        <button type="submit">Create New User</button>
-      </form> */}
-      <FileProcess />
+
+      <FileProcess userId={userId} />
     </div>
   );
 };

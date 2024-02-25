@@ -4,6 +4,7 @@ import { useState } from "react";
 import axios from "axios";
 
 const Login = () => {
+  const [userId, setUserId] = useState(null);
   const [values, setValues] = useState({
     email: "",
     password: "",
@@ -19,9 +20,14 @@ const Login = () => {
       .post("http://localhost:8081/login", values)
       .then((res) => {
         console.log("res : ", res);
+        console.log("res.data : ", res.data);
+        const userid = res.data.userid;
+        setUserId(userid);
         if (res.status === 200) {
           console.log("res: ", res);
-          navigate("/userdashboard");
+          console.log("userid before navigate ", userid);
+          console.log("userId before navigate ", userId);
+          navigate(`/userdashboard/${userid}`);
         } else {
           console.log("res: ", res.data);
           alert(res.data);

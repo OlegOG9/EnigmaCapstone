@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import Tesseract from "tesseract.js";
 import {
   FileUploadContainer,
   FormField,
@@ -64,6 +65,15 @@ const FileUpload = ({
     delete files[fileName];
     setFiles({ ...files });
     callUpdateFilesCb({ ...files });
+  };
+
+  const processImage = () => {
+    console.log(file);
+    Tesseract.recognize(file, "eng", { logger: (m) => console.log(m) }).then(
+      ({ data: { text } }) => {
+        console.log(text);
+      }
+    );
   };
 
   return (

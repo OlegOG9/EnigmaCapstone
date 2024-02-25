@@ -7,15 +7,16 @@ import Login from "./Login";
 import UserDashboard from "./UserDashboard";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />}></Route>
         <Route path="/register" element={<Register />}></Route>
         <Route path="/login" element={<Login />}></Route>
-        <Route path="/userdashboard" element={<UserDashboard />}></Route>
+        <Route
+          path="/userdashboard/:userId"
+          element={<UserDashboard />}
+        ></Route>
       </Routes>
     </BrowserRouter>
   );

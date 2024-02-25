@@ -57,7 +57,7 @@ app.post("/register", async (req, res) => {
   const hash = bcrypt.hashSync(password, salt);
 
   pool.query(
-    "INSERT INTO users (name, email, password) VALUES ($1, $2, $3)",
+    "INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *",
     [name, email, hash],
     (err, result) => {
       if (err)
@@ -65,13 +65,15 @@ app.post("/register", async (req, res) => {
           error: "Error while inserting the data",
           description: err,
         });
-      return res.json({ status: "Success" });
+      return res.json({
+        userid: result.rows[0].userid,
+        status: "Success",
+      });
     }
   );
 });
 
 app.post("/login", async (req, res) => {
-  console.log(" at login");
   const sql = "SELECT * FROM users WHERE email = $1";
   const email = req.body.email;
   const password = req.body.password;
@@ -89,7 +91,10 @@ app.post("/login", async (req, res) => {
     if (authenticated) {
       console.log("authenticated");
 
-      return res.json({ status: "Success" });
+      return res.json({
+        userid: rows[0].userid,
+        status: "Success",
+      });
     } else {
       console.log("not authenticated");
       return res.status(401).send("Invalid password");
@@ -100,37 +105,29 @@ app.post("/login", async (req, res) => {
   }
 });
 
-// app.post("/login", async (req, res) => {
-//   console.log(" at login");
-//   const sql = "SELECT * FROM users WHERE email = $1";
-//   const email = req.body.email;
-//   const password = req.body.password;
-//   console.log("email: ", email);
+app.post("/addtrx", async (req, res) => {
+  const userid = req.body.userid;
+  const amount = req.body.amount;
+  const description = req.body.description;
+  const type = req.body.type;
+  console.log("req: ", req);
+  console.log("req.body: ", req.body);
 
-//   const user = await pool.query(sql, [email], (err, data) => {
-//     if (err) return res.json({ error: "Logging to server error" });
-//     else {
-//       console.log("return from email query: ", data.rows[0]);
-//     }
-//   });
-
-//   if (!user) {
-//     console.log("User not found", user);
-//     return res.status(401).send("User not found");
-//   }
-
-//   // Compare passwords
-//   const authenticated = bcrypt.compareSync(password, data.rows[0].password);
-//   if (authenticated) {
-//     console.log("authenticated");
-//     const token = jwt.sign({ user }, process.env.ACCESS_TOKEN_SECRET);
-//     res.cookie("token", token, { httpOnly: true });
-//     return res.status(200).json({ status: "Success", rows: user });
-//   } else {
-//     console.log("not authenticated", authenticated);
-//     return res.status(401).send("Invalid password");
-//   }
-// });
+  pool.query(
+    "INSERT INTO transactions (userid, amount, description, type) VALUES ($1, $2, $3, $4) RETURNING *",
+    [userid, amount, description, type],
+    (err, result) => {
+      if (err)
+        return res.json({
+          error: "Error while inserting the data",
+          description: err,
+        });
+      return res.json({
+        status: "Success",
+      });
+    }
+  );
+});
 
 app.listen(8081, () => {
   console.log("running on port 8081");
