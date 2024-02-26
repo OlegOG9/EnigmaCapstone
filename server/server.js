@@ -100,7 +100,6 @@ app.post("/login", async (req, res) => {
       return res.status(401).send("Invalid password");
     }
   } catch (error) {
-    console.error("Logging to server error", error);
     return res.status(500).json({ error: "Logging to server error" });
   }
 });
@@ -110,8 +109,6 @@ app.post("/addtrx", async (req, res) => {
   const amount = req.body.amount;
   const description = req.body.description;
   const type = req.body.type;
-  console.log("req: ", req);
-  console.log("req.body: ", req.body);
 
   pool.query(
     "INSERT INTO transactions (userid, amount, description, type) VALUES ($1, $2, $3, $4) RETURNING *",
@@ -125,6 +122,23 @@ app.post("/addtrx", async (req, res) => {
       return res.json({
         status: "Success",
       });
+    }
+  );
+});
+
+app.get("/transactions/:userid", async (req, res) => {
+  const userid = req.params.userid;
+
+  pool.query(
+    "SELECT * FROM transactions WHERE userid = $1",
+    [userid],
+    (err, result) => {
+      if (err)
+        return res.json({
+          error: "Error while inserting the data",
+          description: err,
+        });
+      return res.json(result);
     }
   );
 });

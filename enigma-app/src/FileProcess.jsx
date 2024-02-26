@@ -1,9 +1,23 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Tesseract from "tesseract.js";
 import axios from "axios";
 
 const FileProcess = (userId) => {
+  const [transactions, setTransactions] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost:8081/transactions/${userId.userId}`)
+      .then((response) => {
+        console.log("response.data.rows: ", response.data.rows);
+        setTransactions(response.data.rows);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
   const [file, setFile] = useState();
   const [progress, setProgress] = useState(0);
   const [result, setResult] = useState("");
@@ -30,7 +44,10 @@ const FileProcess = (userId) => {
       },
     }).then(({ data: { text } }) => {
       setResult(text);
-      setValues({ ...values, description: { text } });
+      setValues({
+        ...values,
+        description: text.substring(9, text.length - 2),
+      });
     });
   };
 
@@ -108,6 +125,7 @@ const FileProcess = (userId) => {
               <select
                 name="transactiontype"
                 id="transactiontype"
+                defaultValue={"debit"}
                 onChange={(e) => setValues({ ...values, type: e.target.value })}
               >
                 <option value="debit">debit</option>
@@ -120,6 +138,24 @@ const FileProcess = (userId) => {
           </form>
         </div>
       )}
+      <div>
+        <table>
+          <tbody>
+            <tr>
+              <th>Description</th>
+              <th>Amount</th>
+              <th>Type</th>
+            </tr>
+            {transactions.map((item) => (
+              <tr key={item.transaction_id}>
+                <td>{item.description}</td>
+                <td>${item.amount}</td>
+                <td>{item.type}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
